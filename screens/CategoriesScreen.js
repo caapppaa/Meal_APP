@@ -4,7 +4,7 @@ import CategoryGridTile from "../components/CategoryGridTile";
 
 function renderCategoryItem(itemData) {
     return (
-        <CategoryGridTile title={itemData.item.title}></CategoryGridTile>
+        <CategoryGridTile title={itemData.item.title} colour={itemData.item.colour}></CategoryGridTile>
     )
 }
 
