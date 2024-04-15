@@ -1,26 +1,42 @@
-import { useLayoutEffect } from "react";
+import { useContext, useLayoutEffect } from "react";
 import { Text, Image, View, StyleSheet, ScrollView } from "react-native";
 import { MEALS } from "../data/dummy-data";
 import MealDetails from "../components/MealDetails";
 import Subtitle from "../components/MealDetail/Subtitle";
 import List from "../components/MealDetail/List";
 import IconButton from "../components/IconButton";
+import { FavouritesContext } from "../store/context/favourites-context";
 
 function MealDetailScreen({ route, navigation }) {
+  const favouriteMealsCtx = useContext(FavouritesContext);
+
   const mealId = route.params.mealId;
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
 
-  function headerButtonPressHandler() {
-    console.log('pressed')
+  const mealIsFavourite = favouriteMealsCtx.ids.includes(mealId);
+
+  function changeFavouriteStatusHandler() {
+      if (mealIsFavourite) {
+        favouriteMealsCtx.removeFavourite(mealId);
+      }
+      else (
+        favouriteMealsCtx.addFavourite(mealId)
+      )
   }
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => {
-        return <IconButton icon="star" color={'white'} onPress={headerButtonPressHandler} />;
+        return (
+          <IconButton
+            icon={mealIsFavourite ? "star" : "star-outline"}
+            color={"white"}
+            onPress={changeFavouriteStatusHandler}
+          />
+        );
       },
     });
-  }, [navigation, headerButtonPressHandler]);
+  }, [navigation, changeFavouriteStatusHandler]);
 
   return (
     <ScrollView style={styles.rootContainer}>
@@ -45,9 +61,9 @@ function MealDetailScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-    rootContainer: {
-        marginBottom: 32
-    },
+  rootContainer: {
+    marginBottom: 32,
+  },
   image: {
     width: "100%",
     height: 350,
@@ -63,11 +79,11 @@ const styles = StyleSheet.create({
     color: "white",
   },
   listContainer: {
-    width: "80%"
+    width: "80%",
   },
   listOuterContainer: {
-    alignItems: 'center'
-  }
+    alignItems: "center",
+  },
 });
 
 export default MealDetailScreen;
